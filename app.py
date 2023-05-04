@@ -3,6 +3,26 @@ import PyPDF2
 import requests
 import io
 import os
+import openai
+
+# Function to get the model completion
+def get_completion(prompt):
+    # Set the OpenAI API key from the environment variable
+    openai_api_key = os.getenv('OPENAI_API_KEY')
+    
+    # Check if the API key is set
+    if not openai_api_key:
+        return "API key for OpenAI not found. Please set the 'OPENAI_API_KEY' environment variable."
+
+    openai.api_key = openai_api_key
+    messages = [{"role": "user", "content": prompt}]
+        
+    response = openai.ChatCompletion.create(
+        model="gpt-3.5-turbo",
+        messages=messages,
+        temperature=0.5, # this is the degree of randomness of the model's output
+    )
+    return response.choices[0].message["content"]
 
 # Keywords for each category
 keywords = {
@@ -11,9 +31,6 @@ keywords = {
     'Tutelas': ['Tutela', 'Tutelas'],
     'Requerimientos': ['contraloria', 'procuraduria']
 }
-
-# Your GPT-3.5 API URL
-GPT_API_URL = 'http://example.com/api/gpt-3.5'
 
 def main():
     st.title("PDF Classification App")
@@ -62,8 +79,13 @@ def main():
             with open(f'{category}/{file}', 'r') as f:
                 text = f.read()
             try:
-                response = propose_response(text)
-                st.write(f'Proposed response for {file} in category {category}: {response}')
+                # Call the function to get the completion
+                prompt = f"""
+                Eres un excelente abogado del ICFES respondiendo {category} el texto que debes responder es {text}
+
+                """
+                st.session_state.content = get_completion(prompt)
+                st.write(f'Proposed response for {file} in category {category}: {st.session_state.content}')
             except Exception as e:
                 st.error(f"Error generating response: {e}")
 
@@ -75,17 +97,6 @@ def extract_text_from_pdf(uploaded_file):
         text += page_obj.extractText()
     return text
 
-def propose_response(text):
-    # Make a request to the GPT-3.5 API
-    try:
-        response = requests.post(GPT_API_URL, json={'text': text})
-        response.raise_for_status()
-    except requests.exceptions.HTTPError as http_err:
-        raise SystemExit(http_err)
-    except Exception as err:
-        raise SystemExit(err)
-    proposed_response = response.json()['response']
-    return proposed_response
-
 if __name__ == "__main__":
     main()
+               
