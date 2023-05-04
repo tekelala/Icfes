@@ -1,5 +1,5 @@
 import streamlit as st
-import PyPDF2
+from PyPDF2 import PdfReader
 import requests
 import io
 import os
@@ -89,12 +89,10 @@ def main():
                 st.error(f"Error generating response: {e}")
 
 def extract_text_from_pdf(uploaded_file):
-    pdf_reader = PyPDF2.PdfFileReader(uploaded_file)
+    pdf_reader = PdfReader(uploaded_file)
     text = ''
-    for page_num in range(pdf_reader.numPages):
-        page_obj = pdf_reader.getPage(page_num)
-        text += page_obj.extractText()
+    for page in pdf_reader.pages:
+        text += page.extract_text()
     return text
-
 if __name__ == "__main__":
     main()
