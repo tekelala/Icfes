@@ -32,36 +32,37 @@ keywords = {
     'Requerimientos': ['contraloria', 'procuraduria']
 }
 
-st.title("PDF Classification App")
+def main():
+    st.title("PDF Classification App")
 
-uploaded_files = st.file_uploader("Upload PDF Files", type='pdf', accept_multiple_files=True)
+    uploaded_files = st.file_uploader("Upload PDF Files", type='pdf', accept_multiple_files=True)
 
-if st.button('Iniciar') and uploaded_files is not None:
-    for uploaded_file in uploaded_files:
-        try:
-            text = extract_text_from_pdf(uploaded_file)
-        except Exception as e:
-            st.error(f"Error reading file {uploaded_file.name}: {e}")
-            continue
+    if st.button('Iniciar') and uploaded_files is not None:
+        for uploaded_file in uploaded_files:
+            try:
+                text = extract_text_from_pdf(uploaded_file)
+            except Exception as e:
+                st.error(f"Error reading file {uploaded_file.name}: {e}")
+                continue
 
-        # Save the text to a .txt file
-        try:
-            with open(f'{uploaded_file.name}.txt', 'w') as f:
-                f.write(text)
-        except Exception as e:
-            st.error(f"Error writing to file {uploaded_file.name}.txt: {e}")
-            continue
+            # Save the text to a .txt file
+            try:
+                with open(f'{uploaded_file.name}.txt', 'w') as f:
+                    f.write(text)
+            except Exception as e:
+                st.error(f"Error writing to file {uploaded_file.name}.txt: {e}")
+                continue
 
-        # Classify the PDF based on keywords
-        for category, category_keywords in keywords.items():
-            if any(keyword in text for keyword in category_keywords):
-                # Move the .txt file to a directory named after the category
-                os.makedirs(category, exist_ok=True)
-                try:
-                    os.rename(f'{uploaded_file.name}.txt', f'{category}/{uploaded_file.name}.txt')
-                except Exception as e:
-                    st.error(f"Error moving file to category {category}: {e}")
-                break
+            # Classify the PDF based on keywords
+            for category, category_keywords in keywords.items():
+                if any(keyword in text for keyword in category_keywords):
+                    # Move the .txt file to a directory named after the category
+                    os.makedirs(category, exist_ok=True)
+                    try:
+                        os.rename(f'{uploaded_file.name}.txt', f'{category}/{uploaded_file.name}.txt')
+                    except Exception as e:
+                        st.error(f"Error moving file to category {category}: {e}")
+                    break
 
         # Allow the user to select a category and a .txt file within that category
         category = st.selectbox('Select a category', list(keywords.keys()))
@@ -73,7 +74,7 @@ if st.button('Iniciar') and uploaded_files is not None:
         else:
             st.write(f"No files in category {category}")
 
-        if st.button('Proponer respuesta') and file is not None:
+        if file and st.button('Proponer respuesta'):
             with open(f'{category}/{file}', 'r') as f:
                 text = f.read()
             try:
@@ -97,4 +98,3 @@ def extract_text_from_pdf(uploaded_file):
 
 if __name__ == "__main__":
     main()
-               
