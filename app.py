@@ -74,18 +74,18 @@ if st.button('Iniciar') and uploaded_files is not None:
             st.write(f"No files in category {category}")
 
         if st.button('Proponer respuesta') and file is not None:
-        with open(f'{category}/{file}', 'r') as f:
-            text = f.read()
-        try:
-            # Call the function to get the completion
-            prompt = f"""
-            Eres un excelente abogado del ICFES respondiendo {category} el texto que debes responder es {text}
+            with open(f'{category}/{file}', 'r') as f:
+                text = f.read()
+            try:
+                # Call the function to get the completion
+                prompt = f"""
+                Eres un excelente abogado del ICFES respondiendo {category} el texto que debes responder es {text}
 
-            """
-            st.session_state.content = get_completion(prompt)
-            st.write(f'Proposed response for {file} in category {category}: {st.session_state.content}')
-        except Exception as e:
-            st.error(f"Error generating response: {e}")
+                """
+                st.session_state.content = get_completion(prompt)
+                st.write(f'Proposed response for {file} in category {category}: {st.session_state.content}')
+            except Exception as e:
+                st.error(f"Error generating response: {e}")
 
 def extract_text_from_pdf(uploaded_file):
     pdf_reader = PyPDF2.PdfFileReader(uploaded_file)
