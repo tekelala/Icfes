@@ -72,7 +72,6 @@ if st.button('Iniciar') and uploaded_files is not None:
             file = st.selectbox('Select a file', os.listdir(category))
         else:
             st.write(f"No files in category {category}")
-            return  # Exit the function if the directory does not exist
 
         if st.button('Proponer respuesta'):
             # Propose a response using GPT-3.5
