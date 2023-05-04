@@ -35,10 +35,11 @@ keywords = {
 def main():
     st.title("PDF Classification App")
 
-    uploaded_files = st.file_uploader("Upload PDF Files", type='pdf', accept_multiple_files=True)
+    if "uploaded_files" not in st.session_state:
+        st.session_state.uploaded_files = st.file_uploader("Upload PDF Files", type='pdf', accept_multiple_files=True)
 
-    if st.button('Iniciar') and uploaded_files is not None:
-        for uploaded_file in uploaded_files:
+    if st.button('Iniciar') and st.session_state.uploaded_files is not None:
+        for uploaded_file in st.session_state.uploaded_files:
             try:
                 text = extract_text_from_pdf(uploaded_file)
             except Exception as e:
