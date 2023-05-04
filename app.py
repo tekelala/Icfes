@@ -22,36 +22,50 @@ def main():
         uploaded_files = st.file_uploader("Upload PDF Files", type='pdf', accept_multiple_files=True)
 
         for uploaded_file in uploaded_files:
-            text = extract_text_from_pdf(uploaded_file)
-            
+            try:
+                text = extract_text_from_pdf(uploaded_file)
+            except Exception as e:
+                st.error(f"Error reading file {uploaded_file.name}: {e}")
+                continue
+
             # Save the text to a .txt file
-            with open(f'{uploaded_file.name}.txt', 'w') as f:
-                f.write(text)
+            try:
+                with open(f'{uploaded_file.name}.txt', 'w') as f:
+                    f.write(text)
+            except Exception as e:
+                st.error(f"Error writing to file {uploaded_file.name}.txt: {e}")
+                continue
 
             # Classify the PDF based on keywords
             for category, category_keywords in keywords.items():
                 if any(keyword in text for keyword in category_keywords):
                     # Move the .txt file to a directory named after the category
                     os.makedirs(category, exist_ok=True)
-                    os.rename(f'{uploaded_file.name}.txt', f'{category}/{uploaded_file.name}.txt')
+                    try:
+                        os.rename(f'{uploaded_file.name}.txt', f'{category}/{uploaded_file.name}.txt')
+                    except Exception as e:
+                        st.error(f"Error moving file to category {category}: {e}")
                     break
-
-        # Display the categories and the .txt files in each category
-        for category in keywords.keys():
-            st.write(f'{category}:')
-            for file in os.listdir(category):
-                st.write(file)
 
         # Allow the user to select a category and a .txt file within that category
         category = st.selectbox('Select a category', list(keywords.keys()))
-        file = st.selectbox('Select a file', os.listdir(category))
+        
+        # Check if the directory for the selected category exists
+        if os.path.isdir(category):
+            file = st.selectbox('Select a file', os.listdir(category))
+        else:
+            st.write(f"No files in category {category}")
+            return  # Exit the function if the directory does not exist
 
         if st.button('Proponer respuesta'):
             # Propose a response using GPT-3.5
             with open(f'{category}/{file}', 'r') as f:
                 text = f.read()
-            response = propose_response(text)
-            st.write(f'Proposed response for {file} in category {category}: {response}')
+            try:
+                response = propose_response(text)
+                st.write(f'Proposed response for {file} in category {category}: {response}')
+            except Exception as e:
+                st.error(f"Error generating response: {e}")
 
 def extract_text_from_pdf(uploaded_file):
     pdf_reader = PyPDF2.PdfFileReader(uploaded_file)
@@ -63,7 +77,13 @@ def extract_text_from_pdf(uploaded_file):
 
 def propose_response(text):
     # Make a request to the GPT-3.5 API
-    response = requests.post(GPT_API_URL, json={'text': text})
+    try:
+        response = requests.post(GPT_API_URL, json={'text': text})
+        response.raise_for_status()
+    except requests.exceptions.HTTPError as http_err:
+        raise SystemExit(http_err)
+    except Exception as err:
+        raise SystemExit(err)
     proposed_response = response.json()['response']
     return proposed_response
 
