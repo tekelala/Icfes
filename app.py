@@ -89,16 +89,18 @@ Nuestra esencia es transformar los resultados de las pruebas de Estado en una op
         try:
             # Call the function to get the completion
             prompt = f"""
+            Nombre: Luisa Fernanda Trujillo
+            Cargo: Secretaria General
             Eres un competente abogado del ICFES respondiendo {category} el texto que debes responder es {text} tu respuesta 
-            debe estar dirigida a quién escribió el documento y debe ser clara y concisa.
+            debe estar dirigida a quién escribió el documento y debe ser clara y concisa. Firma con tu nombre y tu cargo. 
             """
             with st.spinner('Generando una propuesta de respuesta...'):
                 st.session_state.content = get_completion(prompt)
             st.text_area('Proposed response', value=st.session_state.content, height=200)
             if st.download_button('Descargar', st.session_state.content, file_name='response.txt', mime='text/plain'):
-                st.success('Response downloaded')
+                st.success('Respuesta descargada')
             if st.button('Enviar Respuesta'):
-                st.success('Response sent')
+                st.success('Respuesta enviada')
         except Exception as e:
             st.error(f"Error generating response: {e}")
 
