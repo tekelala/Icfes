@@ -92,7 +92,7 @@ Nuestra esencia es transformar los resultados de las pruebas de Estado en una op
             Nombre: Luisa Fernanda Trujillo
             Cargo: Secretaria General
             Eres un competente abogado del ICFES respondiendo {category} el texto que debes responder es {text} tu respuesta 
-            debe estar dirigida a quién escribió con su número de identificación y debe ser clara y concisa. Firma con tu nombre y tu cargo. 
+            debe estar dirigida a quién escribió con su número de identificación y debe ser de fondo. Firma con tu nombre y tu cargo. 
             """
             with st.spinner('Generando una propuesta de respuesta...'):
                 st.session_state.content = get_completion(prompt)
