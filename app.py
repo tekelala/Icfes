@@ -98,21 +98,19 @@ Nuestra esencia es transformar los resultados de las pruebas de Estado en una op
             with st.spinner('Generando una propuesta de respuesta...'):
                 st.session_state.content = get_completion(prompt)
             st.text_area('Proposed response', value=st.session_state.content, height=200)
-            if st.button('Descargar como PDF'):
-                pdf = FPDF()
-                pdf.add_page()
-                pdf.set_font("Arial", size=12)
-                pdf.multi_cell(0, 10, st.session_state.content)
-                pdf_file_path = f'response_{file}.pdf'
-                pdf.output(pdf_file_path)
-                with open(pdf_file_path, 'rb') as f:
-                    pdf_bytes = f.read()
-                st.download_button('Descargar PDF', pdf_bytes, file_name='response.pdf', mime='application/pdf')
+            pdf = FPDF()
+            pdf.add_page()
+            pdf.set_font("Arial", size=12)
+            pdf.multi_cell(0, 10, st.session_state.content)
+            pdf_file_path = f'response_{file}.pdf'
+            pdf.output(pdf_file_path)
+            with open(pdf_file_path, 'rb') as f:
+                pdf_bytes = f.read()
+            st.download_button('Descargar PDF', pdf_bytes, file_name='response.pdf', mime='application/pdf')
             if st.button('Enviar Respuesta'):
                 st.success('Respuesta enviada')
         except Exception as e:
             st.error(f"Error generating response: {e}")
-
 def extract_text_from_pdf(uploaded_file):
     pdf_reader = PdfReader(uploaded_file)
     text = ''
