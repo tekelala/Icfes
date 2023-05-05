@@ -98,7 +98,7 @@ Nuestra esencia es transformar los resultados de las pruebas de Estado en una op
             with st.spinner('Generando una propuesta de respuesta...'):
                 st.session_state.content = get_completion(prompt)
             st.text_area('Proposed response', value=st.session_state.content, height=200)
-            if st.download_button('Descargar', st.session_state.content, file_name='response.txt', mime='text/plain'):
+            if st.button('Descargar como PDF'):
                 pdf = FPDF()
                 pdf.add_page()
                 pdf.set_font("Arial", size=12)
@@ -112,7 +112,7 @@ Nuestra esencia es transformar los resultados de las pruebas de Estado en una op
                 st.success('Respuesta enviada')
         except Exception as e:
             st.error(f"Error generating response: {e}")
-            
+
 def extract_text_from_pdf(uploaded_file):
     pdf_reader = PdfReader(uploaded_file)
     text = ''
