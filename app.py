@@ -36,7 +36,7 @@ keywords = {
 def main():
     st.image("header.png")  # replace with the path to your header image
     st.title("ICFES")
-    st.write("Bienvenido al sistema de respuestas asistidas de ICEFES")
+    st.write("Bienvenido al sistema de respuestas asistidas de ICFES")
     st.write("""Somos una entidad que reconoce y valora la calidad de la educación como la clave para construir escenarios de inclusión social, aportar a la competitividad económica y laboral del país y fortalecer los espacios comunes de aprendizaje, como las aulas de clase.
 Nuestra esencia es transformar los resultados de las pruebas de Estado en una oportunidad para identificar las necesidades de aprendizaje y apropiación de competencias de las personas, en cualquier etapa de su vida.""")
 
