@@ -47,56 +47,59 @@ Nuestra esencia es transformar los resultados de las pruebas de Estado en una op
     uploaded_files = st.file_uploader("Upload PDF Files", type='pdf', accept_multiple_files=True)
 
     if uploaded_files is not None:
-        for uploaded_file in uploaded_files:
-            try:
-                text = extract_text_from_pdf(uploaded_file)
-            except Exception as e:
-                st.error(f"Error reading file {uploaded_file.name}: {e}")
-                continue
+    for uploaded_file in uploaded_files:
+        try:
+            text = extract_text_from_pdf(uploaded_file)
+        except Exception as e:
+            st.error(f"Error reading file {uploaded_file.name}: {e}")
+            continue
 
-            # Save the text to a .txt file
-            try:
-                with open(f'{uploaded_file.name}.txt', 'w') as f:
-                    f.write(text)
-            except Exception as e:
-                st.error(f"Error writing to file {uploaded_file.name}.txt: {e}")
-                continue
+        # Save the text to a .txt file
+        try:
+            with open(f'{uploaded_file.name}.txt', 'w') as f:
+                f.write(text)
+        except Exception as e:
+            st.error(f"Error writing to file {uploaded_file.name}.txt: {e}")
+            continue
 
-            # Classify the PDF based on keywords
-            for category, category_keywords in keywords.items():
-                if any(keyword in text for keyword in category_keywords):
-                    # Move the .txt file to a directory named after the category
-                    os.makedirs(category, exist_ok=True)
-                    try:
-                        os.rename(f'{uploaded_file.name}.txt', f'{category}/{uploaded_file.name}.txt')
-                    except Exception as e:
-                        st.error(f"Error moving file to category {category}: {e}")
-                    break
+        # Classify the PDF based on keywords
+        for category, category_keywords in keywords.items():
+            if any(keyword in text for keyword in category_keywords):
+                # Move the .txt file to a directory named after the category
+                os.makedirs(category, exist_ok=True)
+                try:
+                    os.rename(f'{uploaded_file.name}.txt', f'{category}/{uploaded_file.name}.txt')
+                except Exception as e:
+                    st.error(f"Error moving file to category {category}: {e}")
+                break
 
-        # Allow the user to select a category and a .txt file within that category
-        category = st.selectbox('Select a category', list(keywords.keys()))
-        
-        # Check if the directory for the selected category exists
-        file = None
-        if os.path.isdir(category):
-            file = st.selectbox('Select a file', os.listdir(category))
-        else:
-            st.write(f"No files in category {category}")
+    # Allow the user to select a category and a .txt file within that category
+    category = st.selectbox('Select a category', list(keywords.keys()))
+    
+    # Check if the directory for the selected category exists
+    file = None
+    if os.path.isdir(category):
+        file = st.selectbox('Select a file', os.listdir(category))
+    else:
+        st.write(f"No files in category {category}")
 
-        if file and st.button('Proponer respuesta'):
-            with open(f'{category}/{file}', 'r') as f:
-                text = f.read()
-            try:
-                # Call the function to get the completion
-                prompt = f"""
-                Eres un excelente abogado del ICFES respondiendo {category} el texto que debes responder es {text}
-
-                """
+    if file and st.button('Proponer respuesta'):
+        with open(f'{category}/{file}', 'r') as f:
+            text = f.read()
+        try:
+            # Call the function to get the completion
+            prompt = f"""
+            Eres un excelente abogado del ICFES respondiendo {category} el texto que debes responder es {text}
+            """
+            with st.spinner('Generating proposed answer...'):
                 st.session_state.content = get_completion(prompt)
-                st.write(f'Proposed response for {file} in category {category}: {st.session_state.content}')
-            except Exception as e:
-                st.error(f"Error generating response: {e}")
-
+            st.text_area('Proposed response', value=st.session_state.content, height=200)
+            if st.download_button('Descargar', st.session_state.content, file_name='response.txt', mime='text/plain'):
+                st.success('Response downloaded')
+            if st.button('Enviar Respuesta'):
+                st.success('Response sent')
+        except Exception as e:
+            st.error(f"Error generating response: {e}")
 
 def extract_text_from_pdf(uploaded_file):
     pdf_reader = PdfReader(uploaded_file)
