@@ -33,7 +33,16 @@ keywords = {
 }
 
 def main():
-    st.title("PDF Classification App")
+    st.image("header.png")  # replace with the path to your header image
+    st.title("ICETEX")
+    st.write("Bienvenido al sistema de respuestas asistidas de ICETEX")
+
+    col1, col2 = st.columns(2)
+    col1.image("SG.jpg")  # replace with the path to your profile picture
+    col2.write("Hola Luisa, estos son los documentos para hoy")
+    
+    st.title("""Somos una entidad que reconoce y valora la calidad de la educación como la clave para construir escenarios de inclusión social, aportar a la competitividad económica y laboral del país y fortalecer los espacios comunes de aprendizaje, como las aulas de clase.
+Nuestra esencia es transformar los resultados de las pruebas de Estado en una oportunidad para identificar las necesidades de aprendizaje y apropiación de competencias de las personas, en cualquier etapa de su vida.""")
 
     uploaded_files = st.file_uploader("Upload PDF Files", type='pdf', accept_multiple_files=True)
 
