@@ -82,7 +82,7 @@ Nuestra esencia es transformar los resultados de las pruebas de Estado en una op
     if os.path.isdir(category):
         file = st.selectbox('Select a file', os.listdir(category))
     else:
-        st.write(f"No files in category {category}")
+        st.write(f"No hay archivos en {category}")
 
     if file and st.button('Proponer respuesta'):
         with open(f'{category}/{file}', 'r') as f:
