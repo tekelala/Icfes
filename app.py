@@ -89,7 +89,8 @@ Nuestra esencia es transformar los resultados de las pruebas de Estado en una op
         try:
             # Call the function to get the completion
             prompt = f"""
-            Eres un excelente abogado del ICFES respondiendo {category} el texto que debes responder es {text}
+            Eres un competente abogado del ICFES respondiendo {category} el texto que debes responder es {text} tu respuesta 
+            debe estar dirigida a quién escribió el documento y debe ser clara y concisa.
             """
             with st.spinner('Generando una propuesta de respuesta...'):
                 st.session_state.content = get_completion(prompt)
