@@ -26,8 +26,8 @@ def get_completion(prompt):
 
 # Keywords for each category
 keywords = {
-    'Quejas': ['Queja', 'Reclamo'],
-    'Derechos': ['Derecho de Petición', 'Peticion'],
+    'Quejas y Reclamos': ['Queja', 'Reclamo'],
+    'Derechos de Petición': ['Derecho de Petición', 'Peticion'],
     'Tutelas': ['Tutela', 'Tutelas'],
     'Requerimientos': ['contraloria', 'procuraduria']
 }
@@ -91,7 +91,7 @@ Nuestra esencia es transformar los resultados de las pruebas de Estado en una op
             prompt = f"""
             Eres un excelente abogado del ICFES respondiendo {category} el texto que debes responder es {text}
             """
-            with st.spinner('Generating proposed answer...'):
+            with st.spinner('Generando una propuesta de respuesta...'):
                 st.session_state.content = get_completion(prompt)
             st.text_area('Proposed response', value=st.session_state.content, height=200)
             if st.download_button('Descargar', st.session_state.content, file_name='response.txt', mime='text/plain'):
